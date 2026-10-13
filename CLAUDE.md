@@ -24,7 +24,7 @@ iPad-only mini-basketball (ミニバス/elementary school) shot chart app. Close
 
 - **iOS 17.0+**, **Xcode 15+** required (SwiftData dependency)
 - `TARGETED_DEVICE_FAMILY = 2` (iPad only)
-- Orientation locked to landscape in `Info.plist` (`UISupportedInterfaceOrientations~ipad`)
+- Orientation: `Info.plist` declares support for all orientations (`UISupportedInterfaceOrientations~ipad`), as required for iPad multitasking/Stage Manager. Landscape-only is enforced at runtime via `AppDelegate.application(_:supportedInterfaceOrientationsFor:)` in `ShootChartApp.swift`. `UIRequiresFullScreen` was removed (deprecated, ignored by newer Xcode/iPadOS).
 
 ## Architecture
 

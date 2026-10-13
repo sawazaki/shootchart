@@ -8,7 +8,7 @@ struct PlayerListView: View {
     @State private var showFilePicker = false
     @State private var importError: String?
     @State private var showError = false
-    @State private var importedCount = 0
+    @State private var successMessage = ""
     @State private var showSuccess = false
 
     var body: some View {
@@ -58,7 +58,7 @@ struct PlayerListView: View {
         .alert("インポート完了", isPresented: $showSuccess) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("\(importedCount)件の選手データをインポートしました")
+            Text(successMessage)
         }
     }
 
@@ -68,8 +68,12 @@ struct PlayerListView: View {
             guard let url = urls.first else { return }
             do {
                 let parsed = try parseCSV(from: url)
-                upsertPlayers(parsed, context: context)
-                importedCount = parsed.count
+                try upsertPlayers(parsed.players, context: context)
+                if parsed.skippedRows > 0 {
+                    successMessage = "\(parsed.players.count)件の選手データをインポートしました\n（\(parsed.skippedRows)行は背番号または氏名が未入力のため取り込みませんでした）"
+                } else {
+                    successMessage = "\(parsed.players.count)件の選手データをインポートしました"
+                }
                 showSuccess = true
             } catch {
                 importError = error.localizedDescription
